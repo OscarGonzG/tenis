@@ -1,4 +1,8 @@
+[captura]: resources/screenshot.png
+
 # Tenis
+
+![captura][]
 
 ## Clases de J2d
 
