@@ -1,25 +1,25 @@
 package tenis;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Point;
-import java.awt.event.KeyEvent;
 import java.util.Random;
 
 import j2d.JEscena;
 import j2d.JObjetoRectangulo;
 import j2d.Juego;
-import j2d.mods.JObjetoVisNumTexto;
-
+import j2d.mods.multijugador.IReceptorEventosRed;
 
 /**
  * Representa la escena del juego de tenis.
+ *  
+ * @author Óscar González García
+ * @version mar-2026
  */
 public class EscenaTenis extends JEscena {
 	
-	private final Jugador jugadorIzq;
-	private final Jugador jugadorDer;
-	private final Pelota pelota;
+	private Marcador marcadorIzq;
+	private Marcador marcadorDer;
+	private Pelota pelota;
 	
 	private static final int SEPARACION_PALA = 60;
 	private static final int RADIO_PELOTA = 10;
@@ -27,7 +27,6 @@ public class EscenaTenis extends JEscena {
 	
 	private static final int SEPARACION_PARED_SUP_PUNTUACION = 70;
 	private static final int SEPARACION_PARED_INF_PUNTUACION = 150;
-	private static final int TAMANHO_FUENTE = 32;
 	
 	private static final int ANCHO_RED = 4;
 	private static final int NUM_SEGMENTOS_RED = 10;
@@ -40,54 +39,48 @@ public class EscenaTenis extends JEscena {
 	 */
 	public EscenaTenis() {
 		poneFondo(Color.BLACK);
-		
-		creaBordes(Color.BLACK);
-		
-		// Pelota
-		this.pelota = new Pelota("pelota", RADIO_PELOTA);
-		incluyeObjCentrado(pelota, Juego.anchoPixelsX() / 2, Juego.altoPixelsY() / 2);
-		pelota.asignaVelX(VELOCIDAD_PELOTA);
-		
-		// Contadores
-		JObjetoVisNumTexto contadorIzq = new JObjetoVisNumTexto("", 0);
-		JObjetoVisNumTexto contadorDer = new JObjetoVisNumTexto("", 0);
-		contadorIzq.asignaFuente(Font.DIALOG, Font.BOLD, TAMANHO_FUENTE);
-		contadorDer.asignaFuente(Font.DIALOG, Font.BOLD, TAMANHO_FUENTE);
-		
-		contadorIzq.asignaColor(Color.WHITE);
-		contadorDer.asignaColor(Color.WHITE);
-		
-		incluyeObjCentrado(contadorIzq, SEPARACION_PARED_INF_PUNTUACION, SEPARACION_PARED_SUP_PUNTUACION);
-		incluyeObjCentrado(contadorDer, Juego.anchoPixelsX() - SEPARACION_PARED_INF_PUNTUACION, SEPARACION_PARED_SUP_PUNTUACION);
-		
-		
-		
-		// Jugadores
-		this.jugadorIzq = new Jugador(contadorIzq);
-		this.jugadorDer = new Jugador(contadorDer);
-		
-		
-		// Palas
-		Controles controlesIzq = new Controles(KeyEvent.VK_W, KeyEvent.VK_S);
-		Controles controlesDer = new Controles(KeyEvent.VK_UP, KeyEvent.VK_DOWN);
-		
-		Pala palaIzq = new Pala("pala1", controlesIzq);
-		Pala palaDer = new Pala("pala2", controlesDer);
-		
-		controladoTecladoAnhade(palaIzq);
-		controladoTecladoAnhade(palaDer);
-		
-		incluyeObjCentrado(palaIzq, SEPARACION_PALA, Juego.altoPixelsY() / 2);
-		incluyeObjCentrado(palaDer, Juego.anchoPixelsX() - SEPARACION_PALA,
-							Juego.altoPixelsY() / 2);
+		creaBordes(Color.BLACK);		
 		generaRed();
 	}
 
+	@Override
+	public void entraEscena() {
+		Juego.anhadeReceptorEventosRed(new IReceptorEventosRed() {
+			@Override
+			public void jugadorUnido(int numJugador) {				
+				if (numJugador == 1) {
+					marcadorIzq = new Marcador("marcador0");
+					incluyeObjCentrado(marcadorIzq, SEPARACION_PARED_INF_PUNTUACION,
+							SEPARACION_PARED_SUP_PUNTUACION);
+					Pala pala = new Pala("pala1");
+					incluyeObjCentrado(pala, SEPARACION_PALA, Juego.altoPixelsY() / 2);
+					controladoTecladoRedAnhade(pala, 0);
+					
+					marcadorDer = new Marcador("marcador1");
+					incluyeObjCentrado(marcadorDer, 
+							Juego.anchoPixelsX() - SEPARACION_PARED_INF_PUNTUACION,
+							SEPARACION_PARED_SUP_PUNTUACION);
+					
+					pala = new Pala("pala2");
+					incluyeObjCentrado(pala, Juego.anchoPixelsX() - SEPARACION_PALA,
+							Juego.altoPixelsY() / 2);
+					controladoTecladoRedAnhade(pala, 1);
+					
+					pelota = new Pelota("pelota", RADIO_PELOTA);
+					incluyeObjCentrado(pelota, Juego.anchoPixelsX() / 2, Juego.altoPixelsY() / 2);
+					pelota.asignaVelX(VELOCIDAD_PELOTA);
+				}
+			}
+		});
+	}
+	
 	/**
 	 * Posiciona la pelota en el centro de la escena y le asigna su velocidad por
 	 * defecto en un sentido aleatorio del eje X.
 	 */
 	public void reiniciaPelota() {
+		if (Juego.esCliente()) return;
+		
 		pelota.posicionaCentro(new Point(Juego.anchoPixelsX() / 2,
 								Juego.altoPixelsY() / 2));
 		if (rand.nextBoolean()) {
@@ -110,11 +103,11 @@ public class EscenaTenis extends JEscena {
 		}
 	}
 	
-	public Jugador getJugadorIzq() {
-		return jugadorIzq;
+	public Marcador getMarcadorIzq() {
+		return marcadorIzq;
 	}
 	
-	public Jugador getJugadorDer() {
-		return jugadorDer;
+	public Marcador getMarcadorDer() {
+		return marcadorDer;
 	}
 }

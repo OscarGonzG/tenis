@@ -1,14 +1,33 @@
 package tenis;
 
 import java.awt.Color;
+import java.awt.Point;
 
 import j2d.JObjeto;
 import j2d.JObjetoCirculo;
+import j2d.Juego;
+import j2d.mods.multijugador.VariableRed;
 
+/**
+ * Pelota en el juego de tenis.
+ *  
+ * @author Óscar González García
+ * @version abr-2026
+ */
 public class Pelota extends JObjetoCirculo {
+	
+	private final VariableRed<Point> pos;
 	
 	public Pelota(String nombre, int radio) {
 		super(nombre, radio, Color.WHITE);
+		pos = Juego.nuevaVariableRed(Point.class, nombre + ".posX", new Point());
+		
+		if (Juego.esCliente()) {
+			colisionador().desactiva();
+			pos.anhadeSuscriptor(v -> {
+				this.posiciona(v.valor());
+			});
+		}
 	}
 
 	
@@ -21,13 +40,20 @@ public class Pelota extends JObjetoCirculo {
 			asignaVelY(-velY());
 			break;
 		case "escena.paredIzq":
-			escena.getJugadorDer().puntua();
+			escena.getMarcadorDer().puntua();
 			escena.reiniciaPelota();
 			break;
 		case "escena.paredDer":
-			escena.getJugadorIzq().puntua();
+			escena.getMarcadorIzq().puntua();
 			escena.reiniciaPelota();
 			break;
+		}
+	}
+	
+	@Override
+	public void ciclo() {
+		if (Juego.esServidor()) {
+			pos.asignaValor(posicion());
 		}
 	}
 }
