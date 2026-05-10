@@ -2,12 +2,14 @@ package tenis;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.nio.ByteBuffer;
 import java.util.Random;
 
 import j2d.JEscena;
 import j2d.JObjetoRectangulo;
 import j2d.Juego;
 import j2d.mods.multijugador.IReceptorEventosRed;
+import j2d.mods.multijugador.ISerializador;
 
 /**
  * Representa la escena del juego de tenis.
@@ -45,6 +47,23 @@ public class EscenaTenis extends JEscena {
 
 	@Override
 	public void entraEscena() {
+		ISerializador<PointDepuracion> serializador = 
+				new ISerializador<PointDepuracion>() {
+			@Override
+			public void serializar(ByteBuffer buf, PointDepuracion obj) {
+				buf.putInt(obj.x);
+				buf.putInt(obj.y);
+				buf.putInt(obj.numSecuencia);
+			}
+			
+			@Override
+			public PointDepuracion deserializar(ByteBuffer buf) {
+				return new PointDepuracion(buf.getInt(), buf.getInt(), buf.getInt());
+			}
+		};
+		Juego.gestorMultijugador().registroSerializables()
+			.registraTipo(PointDepuracion.class, serializador);
+		
 		Juego.anhadeReceptorEventosRed(new IReceptorEventosRed() {
 			@Override
 			public void jugadorUnido(int numJugador) {				
