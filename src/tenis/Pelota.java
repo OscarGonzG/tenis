@@ -20,7 +20,7 @@ public class Pelota extends JObjetoCirculo {
 	
 	public Pelota(String nombre, int radio) {
 		super(nombre, radio, Color.WHITE);
-		pos = Juego.nuevaVariableRed(Point.class, nombre + ".posX", new Point());
+		pos = Juego.nuevaVariableRed(Point.class, nombre + ".pos", new Point());
 		
 		if (Juego.esCliente()) {
 			colisionador().desactiva();

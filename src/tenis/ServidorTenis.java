@@ -22,14 +22,12 @@ public class ServidorTenis {
 					"Indica el servidor", JOptionPane.PLAIN_MESSAGE);
 			
 			if (stringDirServidor == null) {
-				System.out.println("a");
 				System.exit(-1);
 			}
 			
 			String[] strings = stringDirServidor.split(":");
 			
 			if (strings.length != 2) {
-				System.out.println("b");
 				System.exit(-1);				
 			}
 			
@@ -47,7 +45,6 @@ public class ServidorTenis {
 		}
 		
 		GestorMultijugadorServidor servidor = null;
-		Juego.asignaCiclosPorSegundo(120);
 		try {
 		servidor =
 				new GestorMultijugadorServidor(2, dirServidor);

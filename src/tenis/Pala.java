@@ -51,7 +51,7 @@ public class Pala extends JObjetoRectangulo implements IControladoTeclado {
 	public void teclaPresionada(int codigoTecla) {
 		if (codigoTecla == KeyEvent.VK_UP || codigoTecla == KeyEvent.VK_W) {
 			this.asignaVelY(-VELOCIDAD_BASE);
-		} else if (codigoTecla == KeyEvent.VK_W || codigoTecla == KeyEvent.VK_S) {
+		} else if (codigoTecla == KeyEvent.VK_DOWN || codigoTecla == KeyEvent.VK_S) {
 			this.asignaVelY(VELOCIDAD_BASE);
 		}
 	}
@@ -59,7 +59,7 @@ public class Pala extends JObjetoRectangulo implements IControladoTeclado {
 	@Override
 	public void teclaLiberada(int codigoTecla) {
 		if (codigoTecla == KeyEvent.VK_UP || codigoTecla == KeyEvent.VK_W
-				|| codigoTecla == KeyEvent.VK_W || codigoTecla == KeyEvent.VK_S) {
+				|| codigoTecla == KeyEvent.VK_DOWN || codigoTecla == KeyEvent.VK_S) {
 			this.asignaVelY(0);
 		}
 	}

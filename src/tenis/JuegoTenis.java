@@ -27,14 +27,12 @@ public class JuegoTenis {
 					"Indica el servidor", JOptionPane.PLAIN_MESSAGE);
 			
 			if (stringDirServidor == null) {
-				System.out.println("a");
 				System.exit(-1);
 			}
 			
 			String[] strings = stringDirServidor.split(":");
 			
 			if (strings.length != 2) {
-				System.out.println("b");
 				System.exit(-1);				
 			}
 			
@@ -54,7 +52,6 @@ public class JuegoTenis {
 		System.out.println(dirServidor);
 		
 		Juego.asignaNombre("Tenis");
-		Juego.asignaCiclosPorSegundo(120);
 		try {
 			Juego.asignaGestorMultijugador(new GestorMultijugadorCliente(null, dirServidor));
 		} catch (IOException e) {
@@ -62,6 +59,7 @@ public class JuegoTenis {
 			System.exit(-1);
 		}
 		
+		Juego.colisionesDeshabilitadas();
 		EscenaTenis escena = new EscenaTenis();
 		Juego.anhadeEscena(escena);
 		Juego.jugar();
