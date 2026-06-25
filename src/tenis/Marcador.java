@@ -7,6 +7,12 @@ import j2d.Juego;
 import j2d.mods.JObjetoVisNumTexto;
 import j2d.mods.multijugador.VariableRed;
 
+/**
+ * Marcador que muestra una puntuacion.
+ *
+ * @author Óscar González García
+ * @version jun-2026
+ */
 public class Marcador extends JObjetoVisNumTexto {
 	
 	private static final int TAMANHO_FUENTE = 32;
@@ -22,6 +28,9 @@ public class Marcador extends JObjetoVisNumTexto {
 		puntuacion.anhadeSuscriptor(v -> asignaValor(v.valor()));
 	}
 	
+	/**
+	 * Suma un punto.
+	 */
 	public void puntua() {
 		puntuacion.asignaValor(puntuacion.valor() + 1);
 	}
